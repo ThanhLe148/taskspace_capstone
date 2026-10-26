@@ -33,6 +33,20 @@ export function getDatabase() {
         expires_at INTEGER NOT NULL
       ) STRICT;
       CREATE INDEX IF NOT EXISTS sessions_expiry ON sessions(expires_at);
+
+      CREATE TABLE IF NOT EXISTS google_accounts (
+        subject TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE
+      ) STRICT;
+
+      CREATE TABLE IF NOT EXISTS google_oauth_requests (
+        state_hash TEXT PRIMARY KEY,
+        browser_hash TEXT NOT NULL,
+        code_verifier TEXT NOT NULL,
+        nonce TEXT NOT NULL,
+        expires_at INTEGER NOT NULL
+      ) STRICT;
+      CREATE INDEX IF NOT EXISTS google_oauth_expiry ON google_oauth_requests(expires_at);
     `);
     globalDatabase.taskspaceDatabase = database;
   }

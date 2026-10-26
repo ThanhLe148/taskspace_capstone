@@ -69,7 +69,7 @@ export async function authenticateUser(input: unknown): Promise<User> {
     "SELECT id, name, email, password_hash FROM users WHERE email = ?",
   ).get(email) as StoredUser | undefined;
   // Perform the same password work even when the email does not exist.
-  const salt = user?.password_hash.split(":")[0] ?? "0".repeat(32);
+  const salt = user?.password_hash.split(":")[0] || "0".repeat(32);
   const candidate = (await hashPassword(password, salt)).split(":")[1];
   const expected = user?.password_hash.split(":")[1] ?? "0".repeat(128);
   if (!timingSafeEqual(Buffer.from(candidate, "hex"), Buffer.from(expected, "hex")) || !user) {

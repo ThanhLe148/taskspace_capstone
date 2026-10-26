@@ -26,8 +26,12 @@ export async function readCredentials(request: NextRequest) {
 }
 
 export function signedInResponse(request: NextRequest, user: User, status = 200) {
-  const token = createSession(user.id, request.cookies.get(SESSION_COOKIE)?.value);
   const response = NextResponse.json({ user }, { status, headers: { "Cache-Control": "no-store" } });
+  return setSessionCookie(request, response, user);
+}
+
+export function setSessionCookie(request: NextRequest, response: NextResponse, user: User) {
+  const token = createSession(user.id, request.cookies.get(SESSION_COOKIE)?.value);
   response.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
